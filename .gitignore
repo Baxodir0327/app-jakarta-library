@@ -206,3 +206,9 @@ fabric.properties
 /mvnw
 /.mvn/wrapper/maven-wrapper.properties
 /.mvn/wrapper/maven-wrapper.jar
+/.idea/vcs.xml
+/.idea/.gitignore
+/.idea/compiler.xml
+/.idea/encodings.xml
+/.idea/jarRepositories.xml
+/.idea/misc.xml
