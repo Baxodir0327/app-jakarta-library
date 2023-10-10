@@ -32,4 +32,3 @@ public class AuthUser extends Auditable {
         this.status = status;
     }
 }
-

@@ -28,7 +28,6 @@ public class Book  extends Auditable{
         this.description = description;
         this.file = file;
     }
-
 }
 
 
