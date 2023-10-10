@@ -1,5 +1,6 @@
 package com.company.servlet.auth;
 
+import com.company.entity.AuthUser;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,6 +20,15 @@ public class AuthRegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String confirm_password = req.getParameter("confirm_password");
+
+        AuthUser authUser = AuthUser
+                .childBuilder()
+                .email(email)
+                .password(password)
+                .build();
+
     }
 }
