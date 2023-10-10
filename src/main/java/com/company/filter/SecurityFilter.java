@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Predicate;
 
-@WebFilter(filterName = "SecurityFilter",value = "/*")
-public class SecurityFilter implements Filter{
+@WebFilter(filterName = "SecurityFilter", value = "/*")
+public class SecurityFilter implements Filter {
     private static final List<String> WHITE_LIST = List.of(
             "/",
             "/book/list",
@@ -20,7 +20,7 @@ public class SecurityFilter implements Filter{
             "/storage/show",
             "/file/download"*/
     );
-    private static final Predicate<String> isOpen= WHITE_LIST::contains;
+    private static final Predicate<String> isOpen = WHITE_LIST::contains;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
@@ -28,10 +28,10 @@ public class SecurityFilter implements Filter{
         HttpServletResponse response = (HttpServletResponse) res;
         String requestURI = request.getRequestURI();
         System.out.println("requestURI = " + requestURI);
-        if (!isOpen.test(requestURI)){
-           response.sendRedirect("/auth/login");
+        if (!isOpen.test(requestURI)) {
+            response.sendRedirect("/auth/login");
 //            response.sendError(401,"Unauthorized");
-        }else {
+        } else {
             filterChain.doFilter(request,response);
         }
     }

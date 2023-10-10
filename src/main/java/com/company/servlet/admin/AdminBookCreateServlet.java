@@ -14,7 +14,7 @@ public class AdminBookCreateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("/views/admin/create_book.jsp");
-        dispatcher.forward(req,resp);
+        dispatcher.include(req,resp);
     }
 
     @Override
