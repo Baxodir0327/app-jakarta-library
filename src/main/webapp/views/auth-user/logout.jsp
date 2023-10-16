@@ -13,7 +13,12 @@
 </head>
 <body>
 <jsp:include page="/fragments/navbar.jsp"/>
+
+
+
 <h1> Logout Page</h1>
+
+
 <jsp:include page="/fragments/js.jsp"/>
 </body>
 </html>

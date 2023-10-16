@@ -15,10 +15,7 @@ public class SecurityFilter implements Filter {
             "/",
             "/book/list",
             "/auth/login",
-            "/auth/register",
-            "/activation.*" /*,
-            "/storage/show",
-            "/file/download"*/
+            "/auth/register"
     );
     private static final Predicate<String> isOpen = WHITE_LIST::contains;
 
@@ -26,8 +23,10 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+
         String requestURI = request.getRequestURI();
         System.out.println("requestURI = " + requestURI);
+
         if (!isOpen.test(requestURI)) {
             response.sendRedirect("/auth/login");
 //            response.sendError(401,"Unauthorized");

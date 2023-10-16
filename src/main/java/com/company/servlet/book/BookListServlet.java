@@ -14,7 +14,7 @@ public class BookListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("/views/book/book_list.jsp");
-        dispatcher.forward(req,resp);
+        dispatcher.include(req,resp);
     }
 
     @Override

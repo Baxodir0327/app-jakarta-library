@@ -5,9 +5,9 @@
     <jsp:include page="/fragments/css.jsp"/>
 </head>
 <body>
-<jsp:include page="/fragments/js.jsp"/>
-
-
 <jsp:include page="/fragments/navbar.jsp"/>
+<h1>Main page</h1>
+L
+<jsp:include page="/fragments/js.jsp"/>
 </body>
 </html>
