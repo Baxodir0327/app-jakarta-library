@@ -1,7 +1,12 @@
 package com.company.servlet.auth;
 
 import com.company.dao.AuthUserDAO;
+import com.company.dao.AuthUserOTPDAO;
 import com.company.entity.AuthUser;
+import com.company.entity.AuthUserOTP;
+import com.company.services.MailtrapService;
+import com.company.utils.PasswordUtils;
+import com.company.utils.StringUtils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,48 +18,66 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @WebServlet(name = "AuthRegisterServlet", value = "/auth/register")
 public class AuthRegisterServlet extends HttpServlet {
+
     private final AuthUserDAO authUserDAO = new AuthUserDAO();
 
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/views/auth-user/register.jsp");
-        dispatcher.forward(req, resp);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/authuser/register.jsp");
+        dispatcher.forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String confirm_password = req.getParameter("confirm_password");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Optional<AuthUser> optionalAuthUser = authUserDAO.findByemail(email);
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String confirm_password = request.getParameter("confirm_password");
+
         Map<String, String> errors = new HashMap<>();
-        authUserDAO.findByemail(email)
-                .ifPresent(authUser -> errors.put("email_error", "Email Already Taken"));
 
-        if (password == null) {
-            errors.put("password_error", "password is invalid");
+        if (!StringUtils.validEmail(email))
+            errors.put("email_error", "Invalid email");
+        else {
+            authUserDAO.findByEmail(email).ifPresent(
+                    (authUser -> errors.put("email_error", "Email Already Taken")));
         }
 
-        if (!Objects.equals(password,confirm_password)){
-            errors.put("password_error", "password is invalid");
-        }
+        if (password == null)
+            errors.put("password_error", "Password is invalid");
+        if (!Objects.equals(password, confirm_password))
+            errors.put("password_error", "Password is invalid");
 
-        if (!errors.isEmpty()){
-            errors.forEach(req::setAttribute);
-            resp.sendRedirect("/auth/register");
+        if (!errors.isEmpty()) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/views/authuser/login.jsp");
+            errors.forEach(request::setAttribute);
+            dispatcher.forward(request, response);
         }
-
 
         AuthUser authUser = AuthUser
                 .childBuilder()
                 .email(email)
-                .password(password)
+                .role("USER")
+                .status(AuthUser.Status.IN_ACTIVE)
+                .password(PasswordUtils.encode(password))
                 .build();
+        authUserDAO.save(authUser);
 
+        CompletableFuture.runAsync(() -> {
+            AuthUserOTPDAO authUserOTPDAO = AuthUserOTPDAO.getInstance();
+            AuthUserOTP authUserOTP = AuthUserOTP
+                    .childBuilder()
+                    .userID(authUser.getId())
+                    .build();
+            authUserOTPDAO.save(authUserOTP);
+            MailtrapService.sendActivationEmail(authUserOTP.getUserID());
+        });
+
+        response.sendRedirect("/auth/login");
     }
 }

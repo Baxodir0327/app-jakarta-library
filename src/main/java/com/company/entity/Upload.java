@@ -1,19 +1,20 @@
 package com.company.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @ToString
-public class Upload extends Auditable{
+public class Upload extends Auditable {
+
     @Column(nullable = false)
     private String generatedName;
     @Column(nullable = false)

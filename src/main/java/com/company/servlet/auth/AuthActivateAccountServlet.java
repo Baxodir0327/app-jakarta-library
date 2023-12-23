@@ -1,7 +1,9 @@
 package com.company.servlet.auth;
 
 import com.company.dao.AuthUserDAO;
+import com.company.dao.AuthUserOTPDAO;
 import com.company.entity.AuthUser;
+import com.company.entity.AuthUserOTP;
 import com.company.utils.PasswordUtils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -10,17 +12,32 @@ import jakarta.servlet.http.*;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
-@WebServlet(name = "AuthLoginServlet", value = "/auth/login")
-public class AuthLoginServlet extends HttpServlet {
+@WebServlet(name = "AuthActivateAccountServlet", value = "/activation")
+public class AuthActivateAccountServlet extends HttpServlet {
     private final AuthUserDAO authUserDAO = new AuthUserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("next", request.getParameter("next"));
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/authuser/login.jsp");
-        dispatcher.forward(request, response);
+        String token = request.getParameter("token");
+        AuthUserOTPDAO authUserOTPDAO = AuthUserOTPDAO.getInstance();
+        AuthUserOTP authUserOTP = authUserOTPDAO.findByUserID(token);
+        if (authUserOTP == null) {
+            response.sendError(400, "Token is invalid");
+        }
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Tashkent"));
+        if (currentTime.isAfter(authUserOTP.getValidTill())) {
+            response.sendError(400, "Token is expired");
+            return;
+        }
+
+        AuthUser authUser = authUserDAO.findById(token);
+        authUser.setStatus(AuthUser.Status.ACTIVE);
+        authUserDAO.update(authUser);
+            response.sendRedirect("/auth/login");
     }
 
     @Override

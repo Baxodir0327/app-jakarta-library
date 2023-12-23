@@ -9,11 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "AdminBookDeleteServlet", urlPatterns = "/admin/book/delete/*")
-public class AdminBookDeleteServlet extends HttpServlet {
+@WebServlet(name = "AdminBookUpdateServlet", urlPatterns = "/admin/book/update/*")
+public class AdminBookUpdateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/admin/delete_book.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/admin/update_book.jsp");
         dispatcher.forward(request, response);
     }
 

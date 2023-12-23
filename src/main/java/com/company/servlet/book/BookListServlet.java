@@ -1,5 +1,6 @@
 package com.company.servlet.book;
 
+import com.company.dao.BookDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,16 +10,20 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "BookListServlet",value = "/book/list")
+@WebServlet(name = "BookServlet", value = "/book/list")
 public class BookListServlet extends HttpServlet {
+
+    private final BookDAO bookDAO = new BookDAO();
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/views/book/book_list.jsp");
-        dispatcher.include(req,resp);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("books", bookDAO.findAll());
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/book/book_list.jsp");
+        dispatcher.forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.sendError(405);
     }
 }

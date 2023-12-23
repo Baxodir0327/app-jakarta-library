@@ -1,6 +1,9 @@
 package com.company.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToOne;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,16 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
-public class Book  extends Auditable{
-    private String title ;
-    private String author;
+public class Book extends Auditable {
+    private String title;
     private String description;
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Upload cover;
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Upload file;
-
 
     @Builder(builderMethodName = "childBuilder")
     public Book(String id, LocalDateTime createdAt, LocalDateTime updatedAt, String title, String description, Upload file) {
@@ -29,5 +27,3 @@ public class Book  extends Auditable{
         this.file = file;
     }
 }
-
-
